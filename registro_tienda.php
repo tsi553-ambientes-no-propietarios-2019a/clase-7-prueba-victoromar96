@@ -1,50 +1,54 @@
 <?php
-
-	session_start();
-
-	include('php/conection.php');
-
-	if ($_POST) {
-		if (isset($_POST['nombre'])&&isset($_POST['direccion'])&&isset($_POST['usuario'])&&isset($_POST['clave'])&&!empty($_POST['nombre'])&&!empty($_POST['direccion'])&&!empty($_POST['usuario'])&&!empty($_POST['clave'])) {
-
-			$nombre = $_POST['nombre'];
-			$direccion = $_POST['direccion'];
-			$usuario = $_POST['usuario'];
-			$clave = $_POST['clave'];
-
-			$sqlinsert = "INSERT INTO tabla1(nombre, direccion, usuario, clave) VALUES ('$nombre', '$direccion', '$usuario', '$clave')";
-
-			$res = $conn->query($sqlinsert);
-
-			if ($conn->error) {
-				header('Location: registro_tienda.php?message_error=Error en la insercion'.$conn->error);
-			}else{
-			
-			}
-		}else{
-			header('Location: registro_tienda.php?message_error=Llene todos los campos');
-		}
-	}
-
+include('php/conection.php');
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Tienda</title>
+    <title>Registro</title>
 </head>
 <body>
-	<h2>Registro De Tienda</h2>
-	
-	<form action="index.php" method="POST">
-		
-		<input type="text" name="nombre" placeholder="Nombre De La Tienda"><br><br>
-		<input type="text" name="direccion" placeholder="Dirección"><br><br>
-		<input type="text" name="usuario" placeholder="Usuario"><br><br>
-		<input type="text" name="clave" placeholder="Clave"><br><br>
-		<button>Registrar</button>
-	</form>
-	<br>
-	<br>
-
+    <h2>Registro de Tienda</h2>
+    <form method="POST">
+        <input type="text" name="nomtienda" placeholder="Nombre de la tienda"><br><br>
+        <input type="text" name="username" placeholder="Nombre de usuario"><br><br>
+        <input type="password" name="pass" placeholder="Password"><br><br>
+        <input type="password" name="pass1" placeholder="Repetir password"><br><br>
+        <button>Registrar</button>
+    </form>
+    <br><br>
+    <?php
+        if ($_GET) {
+            if (isset($_GET['message'])) {
+                echo $_GET['message'];
+            }
+        }
+    ?>
 </body>
 </html>
+
+<?php
+//include('php/conection.php');
+if ($_POST) {
+    if (isset($_POST['nomtienda'])&&isset($_POST['username'])&&isset($_POST['pass'])&&isset($_POST['pass1'])&&!empty($_POST['nomtienda'])&&!empty($_POST['username'])&&!empty($_POST['pass'])&&!empty($_POST['pass1'])) {
+        $nomtienda = $_POST['nomtienda'];
+        $username = $_POST['username'];
+        $pass = $_POST['pass'];
+        $pass1 = $_POST['pass1'];
+        if ($pass==$pass1) {
+            $sqlinsert = "INSERT INTO tienda(nombretienda, usuario, clave) VALUES ('$nomtienda', '$username', md5('$pass'))";
+            $conn->query($sqlinsert);
+            if ($conn->error) {
+                header('Location: ../registro_tienda.php?message=Error en la insercion'.$conn->error);
+                exit;
+            }else{
+                header('Location: index.php?message=Tienda registrada correctamente, puede iniciar sesión!');
+            }
+        }else{
+            echo 'Los passwords no coinciden';
+        }
+        
+    }else{
+        echo 'Llenar todos los campos';
+    }
+}
+?>
